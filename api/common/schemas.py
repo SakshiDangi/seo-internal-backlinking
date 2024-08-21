@@ -6,6 +6,44 @@ from pydantic import BaseModel, validator
 from pydantic.v1 import Field
 
 
+# DB schemas
+class User(BaseModel):
+    id: int
+    email: str
+    first_name: str = None
+    last_name: str = None
+    active: bool = None
+
+
+class Website(BaseModel):
+    id: int
+    name: str
+    description: str
+    domain: str
+    created_at: str
+    updated_at: str
+
+
+class WebsitePages(BaseModel):
+    id: int
+    website_id: int
+    url: str
+    canonical_url: str
+    title: str
+    description: str
+    author: str
+    keywords: str
+    language_code: str
+    text: str
+    markdown: str
+
+
+class UserWebsite(BaseModel):
+    id: int
+    user_id: int
+    website_id: int
+
+
 class LLMConnection(str, Enum):
     nvidia = "NVIDIA"
     aws = "BEDROCK"
