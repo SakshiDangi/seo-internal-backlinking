@@ -1,0 +1,207 @@
+{
+  "uber_suggest": {
+    "name": "UberSuggestKeywordMetrics",
+    "api_url": "https://app.neilpatel.com/api/match_keywords",
+    "method": "post",
+    "description": "Use this api to get keywords metrics like search volume, cpc, competition etc., takes input as list and list length at max is 3 means only take upto 3 keywords",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer app#tier2__87ffeff94cf61ca07545f077d9c68a9798ce74b6"
+    },
+    "path": {
+      "keywords": "body.keywords"
+    },
+    "body": {
+      "language": "en",
+      "locId": "2840",
+      "keywords": []
+    },
+    "params": {},
+    "input_json_schema": {
+      "type": "object",
+      "description": "Use this api to get keywords metrics like search volume, cpc, competition etc., takes input as list and list length at max is 3 means only take upto 3 keywords",
+      "properties": {
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "takes only upto 3 keywords at max"
+        }
+      },
+      "required": [
+        "keywords"
+      ]
+    }
+  },
+
+  "uber_suggest_long_tail": {
+    "name": "UberSuggestLongTailKeywordMetrics",
+    "api_url": "https://app.neilpatel.com/api/keyword_suggestions_info_task_status",
+    "method": "post",
+    "description": "Use this api to get long tail keywords metrics like search volume, cpc, competition etc.",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer app#tier2__87ffeff94cf61ca07545f077d9c68a9798ce74b6"
+    },
+    "path": {
+      "keywords": "body.keywords"
+    },
+    "body": {
+      "language": "en",
+      "locId": "2840",
+      "keywords": []
+    },
+    "params": {},
+    "input_json_schema": {
+      "type": "object",
+      "description": "Use this api to get long tail keywords metrics like search volume, cpc, competition etc.",
+      "properties": {
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "keywords accept list of max 3 keywords to be searched at a time"
+        }
+      },
+      "required": [
+        "keywords"
+      ]
+    }
+  },
+  "uber_suggest_url": {
+    "name": "UberSuggestUrlKeywordMetrics",
+    "api_url": "https://app.neilpatel.com/api/domain_keywords",
+    "method": "get",
+    "description": "Use this api to get keywords from website url.",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer app#tier2__87ffeff94cf61ca07545f077d9c68a9798ce74b6"
+    },
+    "path": {
+      "domain": "params.domain"
+    },
+    "params": {
+      "domain":"",
+      "language": "en",
+      "searchType": "organic"
+    },
+    "body": {
+    },
+    "input_json_schema": {
+      "type": "object",
+      "description": "Use this api to get keywords using url/links.",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "search input url/links query for keyword search"
+        }
+      },
+      "required": [
+        "domain"
+      ]
+    }
+  },
+  "apify_website_scraper": {
+    "name": "ApifyWebsiteScraper",
+    "api_url": "https://api.apify.com/v2/acts/apify~website-content-crawler/run-sync-get-dataset-items",
+    "method": "post",
+    "description": "Use this tool to scrape content from the give website.",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer apify_api_ixAWo59VFK8dwdF9wVrQm7TVgYtODM1aRh2d"
+    },
+    "path": {
+      "url": "body.startUrls.0.url"
+    },
+    "body": {
+      "startUrls": [
+        {
+          "url": ""
+        }
+      ],
+      "useSitemaps": false,
+      "crawlerType": "playwright:adaptive",
+      "includeUrlGlobs": [],
+      "excludeUrlGlobs": [],
+      "ignoreCanonicalUrl": false,
+      "maxCrawlDepth": 1,
+      "maxCrawlPages": 2,
+      "initialConcurrency": 0,
+      "maxConcurrency": 10,
+      "initialCookies": [],
+      "proxyConfiguration": {
+        "useApifyProxy": true
+      },
+      "maxSessionRotations": 10,
+      "maxRequestRetries": 5,
+      "requestTimeoutSecs": 60,
+      "minFileDownloadSpeedKBps": 128,
+      "dynamicContentWaitSecs": 10,
+      "waitForSelector": "",
+      "maxScrollHeightPixels": 5000,
+      "removeElementsCssSelector": "nav, footer, script, style, noscript, svg,\n[role=\"alert\"],\n[role=\"banner\"],\n[role=\"dialog\"],\n[role=\"alertdialog\"],\n[role=\"region\"][aria-label*=\"skip\" i],\n[aria-modal=\"true\"]",
+      "removeCookieWarnings": true,
+      "expandIframes": true,
+      "clickElementsCssSelector": "[aria-expanded=\"false\"]",
+      "htmlTransformer": "readableText",
+      "readableTextCharThreshold": 100,
+      "aggressivePrune": false,
+      "debugMode": false,
+      "debugLog": false,
+      "saveHtml": false,
+      "saveHtmlAsFile": false,
+      "saveMarkdown": true,
+      "saveFiles": false,
+      "saveScreenshots": false,
+      "maxResults": 9999999,
+      "clientSideMinChangePercentage": 15,
+      "renderingTypeDetectionPercentage": 10
+    },
+    "params": {},
+    "input_json_schema": {
+      "type": "object",
+      "description": "Run an Apify actor with the specified input configuration.",
+      "properties": {
+        "url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ]
+    }
+  },
+  "google_search": {
+    "name": "GoogleSearch",
+    "api_url": "https://google.serper.dev/search",
+    "method": "post",
+    "description": "Get the relevant search keywords or results from google",
+    "headers": {
+      "X-API-KEY": "efa24206870dea5cdc5253dcbbc87827a7b76048",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "q": "",
+      "num": 10,
+      "tbm": "blg"
+    },
+    "params": {},
+    "path": {
+      "q": "body.q"
+    },
+    "input_json_schema": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "search input query for google search"
+        }
+      },
+      "required": [
+        "q"
+      ]
+    }
+  }
+}

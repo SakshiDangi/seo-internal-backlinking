@@ -1,0 +1,10 @@
+requests==2.32.3
+langchain==0.2.10
+langchain-openai==0.1.17
+langchain-aws==0.1.11
+langgraph==0.1.11
+weaviate-client==4.7.1
+langchain-community
+slack_sdk
+pandas
+google_search_results
