@@ -17,49 +17,49 @@ from llama_index.core.vector_stores.types import (
 )
 
 
-# llm = Bedrock(model="anthropic.claude-3-sonnet-20240229-v1:0", profile_name='bedrock')
-# embed_model = BedrockEmbedding(model="amazon.titan-embed-text-v1",profile_name='bedrock')
-# Settings.embed_model = embed_model
-# Settings.llm = llm
-# tidb_connection_url = URL(
-#                 drivername="mysql+pymysql",
-#                 username="3nSmu2d6TtaVP1J.root",
-#                 password="gYFH8i7mTrMnDw8X",
-#                 host="gateway01.ap-southeast-1.prod.aws.tidbcloud.com",
-#                 port=4000,
-#                 database="test",
-#                 query={
-#                 "ssl_verify_cert": True,
-#                 "ssl_verify_identity": True,
-#                 "ssl_ca": "C:\\Users\\Jhachirag7\\path_to_ca\\isrgrootx1.pem",
-#             },
+llm = Bedrock(model="anthropic.claude-3-sonnet-20240229-v1:0", profile_name='bedrock')
+embed_model = BedrockEmbedding(model="amazon.titan-embed-text-v1",profile_name='bedrock')
+Settings.embed_model = embed_model
+Settings.llm = llm
+tidb_connection_url = URL(
+                drivername="mysql+pymysql",
+                username="3nSmu2d6TtaVP1J.root",
+                password="gYFH8i7mTrMnDw8X",
+                host="gateway01.ap-southeast-1.prod.aws.tidbcloud.com",
+                port=4000,
+                database="test",
+                query={
+                "ssl_verify_cert": True,
+                "ssl_verify_identity": True,
+                "ssl_ca": "C:\\Users\\Jhachirag7\\path_to_ca\\isrgrootx1.pem",
+            },
 
-#         )
+        )
              
 
 
-# tidbvec = TiDBVectorStore(
-#     connection_string=tidb_connection_url,
-#     table_name="llama_index_rag",
-#     distance_strategy="cosine",
-#     vector_dimension=1536,
-#     drop_existing_table=False,
-# )
+tidbvec = TiDBVectorStore(
+    connection_string=tidb_connection_url,
+    table_name="llama_index_rag",
+    distance_strategy="cosine",
+    vector_dimension=1536,
+    drop_existing_table=False,
+)
 
-# tidb_vec_index = VectorStoreIndex.from_vector_store(tidbvec)
+tidb_vec_index = VectorStoreIndex.from_vector_store(tidbvec)
 
-# query_engine = tidb_vec_index.as_query_engine(
-#     filters=MetadataFilters(
-#         filters=[
-#             MetadataFilter(key="url",value="https://blog.neoleads.com", operator="=="),
-#         ]
-#     ),
-#     similarity_top_k=2,
-# )
-# print(query_engine.get_prompts)
-# response = query_engine.query("some SEO related text")
+query_engine = tidb_vec_index.as_query_engine(
+    filters=MetadataFilters(
+        filters=[
+            MetadataFilter(key="url",value="https://blog.neoleads.com", operator="=="),
+        ]
+    ),
+    similarity_top_k=2,
+)
+print(query_engine.get_prompts)
+response = query_engine.query("some SEO related text")
 
-# print(response)
+print(response)
 
 
 Base = declarative_base()
@@ -88,8 +88,14 @@ class WebsiteContentCrawler:
         Settings.chunk_size = 2048
         self.api_url = api_url
         self.api_key = api_key
+        self.engine = self.get_db_engine()
+        self.Session = sessionmaker(bind=self.engine)
+        self.create_table()
         self.tidbvec = self.get_vector_store()
         self.query_engine=self.get_query_engine()
+
+    def create_table(self):
+        Base.metadata.create_all(self.engine) 
 
 
     def get_query_engine(self):
@@ -120,6 +126,24 @@ class WebsiteContentCrawler:
                 vector_dimension=1536,
                 drop_existing_table=False,
             )
+    
+    def get_db_engine(self):
+        connect_args = {
+                "ssl_verify_cert": True,
+                "ssl_verify_identity": True,
+                "ssl_ca": "C:\\Users\\Jhachirag7\\path_to_ca\\isrgrootx1.pem",
+        }
+        return create_engine(
+            URL.create(
+                drivername="mysql+pymysql",
+                username="3nSmu2d6TtaVP1J.root",
+                password="gYFH8i7mTrMnDw8X",
+                host="gateway01.ap-southeast-1.prod.aws.tidbcloud.com",
+                port=4000,
+                database="test",
+            ),
+            connect_args=connect_args
+        )
 
     def extract_web_content(self,data:list,url:str) -> list[WebContent]:
         web_contents = []
@@ -141,6 +165,23 @@ class WebsiteContentCrawler:
             web_contents.append(web_content)
         return web_contents
     
+    def extract_web_content_sql_db(self,data:list,url:str) -> list[WebContent]:
+        web_contents = []
+        for item in data:
+            metadata = item['metadata']
+            web_content = WebContent(
+                url=url,
+                canonicalUrl=metadata['canonicalUrl'],
+                title=metadata['title'],
+                description=metadata.get('description',""),
+                author=metadata.get('author',""),
+                keywords=metadata.get('keywords',""),
+                languageCode=metadata['languageCode'],
+                text=item['text'],
+                markdown=item['markdown']
+            )
+            web_contents.append(web_content)
+        return web_contents
 
     def web_scraper(self, url):
         headers = {
@@ -204,6 +245,8 @@ class WebsiteContentCrawler:
             storage_context = StorageContext.from_defaults(vector_store=self.tidbvec)
             tidb_vec_index = VectorStoreIndex.from_vector_store(self.tidbvec)
             tidb_vec_index.from_documents(self.extract_web_content(data,url), storage_context=storage_context, show_progress=True)
+            with self.Session() as session:
+                session.bulk_save_objects(self.extract_web_content_sql_db(data,url))
             return response.json()
         except requests.exceptions.RequestException as e:
             return {"Error": str(e)}
