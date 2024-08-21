@@ -6,48 +6,43 @@ from pydantic import BaseModel, validator
 from pydantic.v1 import Field
 
 
-# DB schemas
-class User(BaseModel):
-    id: int
-    email: str
-    first_name: str = None
-    last_name: str = None
-    active: bool = None
-
-
-class Website(BaseModel):
-    id: int
-    name: str
-    description: str
-    domain: str
-    created_at: str
-    updated_at: str
-
-
-class WebsitePages(BaseModel):
-    id: int
-    website_id: int
-    url: str
-    canonical_url: str
-    title: str
-    description: str
-    author: str
-    keywords: str
-    language_code: str
-    text: str
-    markdown: str
-
-
-class UserWebsite(BaseModel):
-    id: int
-    user_id: int
-    website_id: int
-
-
 class LLMConnection(str, Enum):
     nvidia = "NVIDIA"
     aws = "BEDROCK"
     openai = "OPENAI"
+
+
+# Request Input schemas
+
+class EventType(str, Enum):
+    scraping = "scraping"
+    saving = "saving"
+
+
+class RequestBody(BaseModel):
+    """
+    Base request input schema
+    """
+    website_id: str | int
+    user_id: str | int
+    urls: List[str]
+    event: EventType
+
+
+class ApifyWebhookData(BaseModel):
+    eventType: str
+    userId: str
+    actorId: str
+    actorTaskId: str
+    actorRunId: str
+    startedAt: str
+    finishedAt: str
+
+
+class MetadataFilter(BaseModel):
+    key: str
+    value: str
+    operator: str
 
 
 class SplitType(str, Enum):
@@ -80,7 +75,7 @@ class RequestHistory(BaseModel):
 
 class LambdaResponse(TypedDict):
     statusCode: int
-    body: str
+    body: Dict[str, Any]
 
 
 class BaseRequestConfig(BaseModel):
