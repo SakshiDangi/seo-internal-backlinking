@@ -1,0 +1,7 @@
+requests
+apify-client
+llama-index-vector-stores-tidbvector
+llama-index
+sqlalchemy
+mysqlclient
+llama-index-llms-bedrock

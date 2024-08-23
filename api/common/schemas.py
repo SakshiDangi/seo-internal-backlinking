@@ -12,6 +12,39 @@ class LLMConnection(str, Enum):
     openai = "OPENAI"
 
 
+# Request Input schemas
+
+class EventType(str, Enum):
+    scraping = "scraping"
+    saving = "saving"
+
+
+class RequestBody(BaseModel):
+    """
+    Base request input schema
+    """
+    website_id: str | int
+    user_id: str | int
+    urls: List[str]
+    event: EventType
+
+
+class ApifyWebhookData(BaseModel):
+    eventType: str
+    userId: str
+    actorId: str
+    actorTaskId: str
+    actorRunId: str
+    startedAt: str
+    finishedAt: str
+
+
+class MetadataFilter(BaseModel):
+    key: str
+    value: str
+    operator: str
+
+
 class SplitType(str, Enum):
     word = "work"
     char = "character"
@@ -42,7 +75,7 @@ class RequestHistory(BaseModel):
 
 class LambdaResponse(TypedDict):
     statusCode: int
-    body: str
+    body: Dict[str, Any]
 
 
 class BaseRequestConfig(BaseModel):
