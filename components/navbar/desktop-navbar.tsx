@@ -69,8 +69,11 @@ export const DesktopNavbar = ({ navItems }: Props) => {
         </div>
       </div>
       <div className="flex space-x-2 items-center">
-        <Button variant="simple" as={Link} href="/register">
-          Register
+        <Button variant="simple" as={Link} href="/signup">
+          SignUp
+        </Button>
+        <Button variant="simple" as={Link} href="/signin">
+          SignIn
         </Button>
         <Button>Book a demo</Button>
       </div>

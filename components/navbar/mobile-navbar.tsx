@@ -85,12 +85,22 @@ export const MobileNavbar = ({ navItems }: any) => {
             <Button
               variant="simple"
               as={Link}
-              href="/register"
+              href="/signup"
               onClick={() => {
                 setOpen(false);
               }}
             >
-              Register
+              Sign Up
+            </Button>
+            <Button
+              variant="simple"
+              as={Link}
+              href="/signin"
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
+              SignIn
             </Button>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ClerkProvider } from '@clerk/nextjs';
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { ViewTransitions } from "next-view-transitions";
@@ -35,6 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <ClerkProvider>
     <ViewTransitions>
       <html lang="en">
         <body
@@ -44,10 +46,11 @@ export default function RootLayout({
           )}
         >
           <NavBar />
-          {children}
+            {children}
           <Footer />
         </body>
       </html>
     </ViewTransitions>
+    </ClerkProvider>
   );
 }
